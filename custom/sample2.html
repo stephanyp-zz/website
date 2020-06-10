@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Custom App - Dashboard</title>
+<meta charset="UTF-8">
+<% include ../includes/cap %>
+</head>
+<body>
+    <div class="page-wrapper">
+		<aside class="menu-sidebar">
+			<div class="logo">
+				<a href="#">
+					<img width="200" height="18" src="/img/AppDynamicsLogo_black.svg" alt="AppDynamics" />
+				</a>
+			</div>
+			<nav class="navbar-sidebar">
+				<ul class="list-unstyled navbar__list">
+					<li style="margin-bottom:25px">
+						<ul class="nav" id="time"></ul>
+					</li>
+					<li><a href="#" ><i class="fa fa-download"></i> Devices</a></li>
+					<li><a href="#" ><i class="fas fa-desktop"></i> Apps</a></li>
+					<li><a href="#" ><i class="fa fa-database"></i> Data</a></li>
+					<li><a href="/views/examples/intro.html" ><i class="fa fa-book"></i> Docs</a></li>
+				</ul>
+			</nav>
+		</aside>    
+		<div class="page-container">  
+			<div class="container-fluid">    
+				<!-- Main Page -->
+				<div class="row">
+					<div id="deviceConnections" class="col-md-3"></div>	
+					<div id="apps" class="col-md-3"></div>	
+					<div id="events" class="col-md-3"></div>		
+				</div>
+				<div class="row">
+                    <div id="deviceTrends" class="col-md-9"></div>
+				    <div id="appsTrends" class="col-md-9"></div>	
+					<div id="eventsTrends" class="col-md-9"></div>	
+				</div>
+			</div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+	//Your BiQ App Components ...
+
+	var hide = function(){
+		ACAP.hideElements(["deviceTrends","appsTrends","eventsTrends"]);
+	}
+
+	var deviceTrend = function(){
+		hide();
+		new ACAP.TimeChartComponent({
+			targetId:"deviceTrends",
+			title:"Connection Trends",
+			xLabel:"Connections",
+			options:{
+				type:"bar",
+				bar:{
+					width : {ratio:.15}
+				}
+			}
+		}).draw(function(selection){
+			alert(JSON.stringify(selection));
+		})
+	}
+
+	var appsTrend = function(){
+		hide();
+        new ACAP.TimeChartComponent({
+			targetId:"appsTrends",
+			xLabel:"Average Response",
+            data : ACAP.generateRandomTimeData(),
+			options:{
+				type:"bar",
+				bar:{
+					width : {ratio:.15}
+				},
+				color:{
+					pattern:['#9fb829']
+				}
+			}
+		}).draw(function(selection){
+			alert(JSON.stringify(selection));
+		})	
+	}
+
+	var eventsTrend = function(){
+		hide();
+		new ACAP.TimeChartComponent({
+			targetId:"eventsTrends",
+			title:"Events Trends",
+			xLabel:"Events"
+		}).draw(function(selection){
+			alert(JSON.stringify(selection));
+		})	
+	}
+
+
+	var buildDashboard = function(){
+		new ACAP.BoxChartComponent({
+			title:"Connections",
+			targetId:"deviceConnections",
+			actionClick: "deviceTrend()",
+			icon:"fa fa-download",
+			options:{size:{height:75,width:250}}
+		}).draw();
+
+		new ACAP.BoxChartComponent({
+			title:"Average Response",
+			targetId:"apps",
+			actionClick: "appsTrend()",
+			icon:"fas fa-desktop",
+			options:{size:{height:75,width:250}}
+		}).draw();	
+
+		new ACAP.BoxChartComponent({
+			title:"Events",
+			targetId:"events",
+			actionClick: "eventsTrend()",
+			icon:"fa fa-database",
+			options:{size:{height:75,width:250}}
+		}).draw();	
+	}
+
+	new ACAP.TimeRangeComponent({
+		targetId:"time"
+	}).draw(function(timeSelected){
+		buildDashboard();
+	});
+
+	buildDashboard();
+</script>
+</html>
